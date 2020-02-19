@@ -47,7 +47,6 @@
 // Can be installed from the library manager
 // https://github.com/dmadison/NintendoExtensionCtrl
 
-#define ONE_SDA 
 
 // Controller1 connected directly to the shield
 Nunchuk nchuk;   // Controller on bus #1
