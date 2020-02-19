@@ -1,6 +1,6 @@
 /*******************************************************************
-    A sample project for making controlling two servo motors
-    with an nunchuck controller
+    A sample project for an printing the inputs 
+    from a nunchuck controller to serial.
 
     Parts:
     D1 Mini ESP8266 * - http://s.click.aliexpress.com/e/uzFUnIe
@@ -23,8 +23,6 @@
 // Standard Libraries
 // ----------------------------
 
-#include <Servo.h>
-
 // ----------------------------
 // Additional Libraries - each one of these will need to be installed.
 // ----------------------------
@@ -35,58 +33,29 @@
 // Can be installed from the library manager
 // https://github.com/dmadison/NintendoExtensionCtrl
 
-#define TILT_SERVO_MIN 70
-#define TILT_SERVO_MAX 180
-
-#define PAN_SERVO_MIN 0
-#define PAN_SERVO_MAX 180
-
-#define PAN_PIN D5
-#define TILT_PIN D6
-
-// Giving the analog stick a deadzone
-#define Y_DEADZONE 30
-#define X_DEADZONE 30
-
-
-// Default starting position for the servos
-int tiltPos = 90; 
-int panPos = 90;
-
-// Resting position of the analog stick when not moved
-// (This probably is not accurate)
-int restY = 130;
-int restX = 130;
-
-Servo panServo; 
-Servo tiltServo;
-
 Nunchuk nchuk;
+
+// print values to serial every second
+#define PRINT_DELAY 1000
 
 void setup() {
   Serial.begin(115200);
-  nchuk.begin();
 
+  // The D1 Nunchuck shield uses the deafault i2c pins
+  // SCL == D1 == GPIO5
+  // SDA == D2 == GPIO4
+  // The address of the nunchuck is 0x52
+
+  nchuk.begin();
   while (!nchuk.connect()) {
     Serial.println("Nunchuk not detected!");
     delay(1000);
   }
-
-  panServo.attach(PAN_PIN); 
-  tiltServo.attach(TILT_PIN);
-
-  delay(100);
-  panServo.write(panPos); 
-  tiltServo.write(tiltPos);
-
-  nchuk.update();
-  restY = nchuk.joyY();
-  restX = nchuk.joyX();
 }
 
 void loop() {
   Serial.println("----- Nunchuk Test -----"); // Making things easier to read
-  
+
   boolean success = nchuk.update();  // Get new data from the controller
 
   if (!success) {  // Ruh roh
@@ -95,44 +64,55 @@ void loop() {
   }
   else {
 
-    // Read a joystick axis (0-255, X and Y)
+    // -------------------
+    // Buttons
+    // -------------------
+
+    boolean zButton = nchuk.buttonZ();
+    boolean cButton = nchuk.buttonC();
+
+    Serial.print("Buttons pressed: ");
+    if (zButton) {
+      Serial.print("z");
+    }
+
+    if (cButton) {
+      Serial.print("c");
+    }
+    Serial.println("");
+
+    // -------------------
+    // Joystick
+    // -------------------
+
+    // Read the joystick axis (0-255)
+    // Note: I havent seen it go near 0 or 255
+    // I've seen ranges closer to 30-210
     int joyY = nchuk.joyY();
     int joyX = nchuk.joyX();
 
-    if(restY != joyY){
-      if(joyY - Y_DEADZONE > restY){
-        //Tilting up
-        if(tiltPos <TILT_SERVO_MAX){
-          tiltPos++;
-        }
-        tiltServo.write(tiltPos);
-      }
-      else if (joyY + Y_DEADZONE < restY){
-        //Tilting down
-        if(tiltPos > TILT_SERVO_MIN){
-          tiltPos--;
-        }
-        tiltServo.write(tiltPos);
-      }
-    }
+    Serial.print("Joystick Value (x,y): ");
+    Serial.print(joyX);
+    Serial.print(",");
+    Serial.println(joyY);
 
-    if(restX != joyX){
-      if(joyX - X_DEADZONE > restX){
-        //Panning Right?
-        if(panPos < PAN_SERVO_MAX){
-          panPos++;
-        }
-        panServo.write(panPos);
-      }
-      else if (joyX + X_DEADZONE < restX){
-        //Panning Left?
-        if(panPos > PAN_SERVO_MIN){
-          panPos--;
-        }
-        panServo.write(panPos);
-      }
-    }
+    // -------------------
+    // Joystick
+    // -------------------
 
-   
+
+    // Read the accelerometer (0-1023)
+    int accelX = nchuk.accelX();
+    int accelY = nchuk.accelY();
+    int accelZ = nchuk.accelZ();
+
+    Serial.print("Accelerometer Value (x,y,z): ");
+    Serial.print(accelX);
+    Serial.print(",");
+    Serial.print(accelY);
+    Serial.print(",");
+    Serial.println(accelZ);
   }
+
+  delay(PRINT_DELAY);
 }
