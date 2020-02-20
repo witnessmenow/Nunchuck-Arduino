@@ -35,7 +35,7 @@
 // Can be installed from the library manager
 // https://github.com/dmadison/NintendoExtensionCtrl
 
-#define TILT_SERVO_MIN 70
+#define TILT_SERVO_MIN 0
 #define TILT_SERVO_MAX 180
 
 #define PAN_SERVO_MIN 0
