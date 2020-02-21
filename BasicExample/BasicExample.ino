@@ -1,6 +1,7 @@
 /*******************************************************************
     A sample project for an printing the inputs 
     from a nunchuck controller to serial.
+    Works on both ESP8266 and ESP32
 
     Parts:
     D1 Mini ESP8266 * - http://s.click.aliexpress.com/e/uzFUnIe

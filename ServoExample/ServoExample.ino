@@ -1,6 +1,9 @@
 /*******************************************************************
-    A sample project for making controlling two servo motors
-    with an nunchuck controller
+    A sample project for controlling servo motors
+    with an nunchuck controller using an ESP8266
+
+    Two servos are controlled by the analog stick
+    the other servo is controlled by C and Z buttons
 
     Parts:
     D1 Mini ESP8266 * - http://s.click.aliexpress.com/e/uzFUnIe
@@ -43,6 +46,7 @@
 
 #define PAN_PIN D5
 #define TILT_PIN D6
+#define OTHER_SERVO_PIN D7
 
 // Giving the analog stick a deadzone
 #define Y_DEADZONE 30
@@ -52,6 +56,7 @@
 // Default starting position for the servos
 int tiltPos = 90; 
 int panPos = 90;
+int otherPos = 90;
 
 // Resting position of the analog stick when not moved
 // (This probably is not accurate)
@@ -60,6 +65,7 @@ int restX = 130;
 
 Servo panServo; 
 Servo tiltServo;
+Servo otherServo;
 
 Nunchuk nchuk;
 
@@ -74,10 +80,12 @@ void setup() {
 
   panServo.attach(PAN_PIN); 
   tiltServo.attach(TILT_PIN);
+  otherServo.attach(OTHER_SERVO_PIN);
 
   delay(100);
   panServo.write(panPos); 
   tiltServo.write(tiltPos);
+  otherServo.write(otherPos);
 
   nchuk.update();
   restY = nchuk.joyY();
@@ -131,6 +139,19 @@ void loop() {
         }
         panServo.write(panPos);
       }
+    }
+
+    if(nchuk.buttonZ())
+    {
+      if(otherPos > 0){
+          otherPos--;
+        }
+        otherServo.write(otherPos);
+    } else if (nchuk.buttonC()){
+      if(otherPos < 180){
+          otherPos++;
+        }
+        otherServo.write(otherPos);
     }
 
    
