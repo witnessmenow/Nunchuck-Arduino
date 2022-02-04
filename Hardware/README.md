@@ -17,7 +17,7 @@ The boards were created using EasyEDA, and the projects can be accessed here:
 - [D1 Mini Nunchuck Shield](https://oshwlab.com/ecenuig/d1-mini-breadboard-buddy_copy)
 - [Nunchuck Featherwing](https://oshwlab.com/ecenuig/nunchuck-featherwing)
 - [Simple Nunchuck Breakout](https://oshwlab.com/ecenuig/simple-nunchunk)
-
+- [Nunchuck Breakout with Retention arms](https://oshwlab.com/ecenuig/nunchuckbreakoutwithret)
 
 ## Help Support what I do!
 
